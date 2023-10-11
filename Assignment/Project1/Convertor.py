@@ -51,8 +51,9 @@ if __name__ == '__main__':
     # 3-1. Pycharm인 경우 shift + f10 단축키를 사용하거나 실행버튼 클릭
     # 3-2. cmd를 이용하는 경우 해당 소스파일이 있는 디렉토리에서 py Convetor.py 입력후 엔터
 
-    name = ""  # 이름 입력
-    name_quotation = "\"" + name + "\""
+    name = "이건보"  # 이름 입력
+    name_quotation = "\"" + name + "\""  # 이름에 쌍따옴표를 추가함
+    # 이 쌍따옴표는 각각 UTF-16BE : 0022, UTF-8 : 22, KS X 1001 : 22 의 값을 가지므로 과제 파일에 알아서 적절히 기록하기 바람
 
     I_NEED_ENCODE_FILE = False
     if I_NEED_ENCODE_FILE:
