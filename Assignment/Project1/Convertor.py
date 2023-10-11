@@ -44,6 +44,13 @@ class Convertor:
 
 
 if __name__ == '__main__':
+    # 사용법
+    # 1. name 변수에 자기 이름을 지정한다.
+    # 2. 인코딩된 txt파일이 필요할 경우 I_NEED_ENCODE_FILE의 값을 True으로 변경한다.
+    # 3. Convertor.py 파일을 실행한다.
+    # 3-1. Pycharm인 경우 shift + f10 단축키를 사용하거나 실행버튼 클릭
+    # 3-2. cmd를 이용하는 경우 해당 소스파일이 있는 디렉토리에서 py Convetor.py 입력후 엔터
+
     name = ""  # 이름 입력
     name_quotation = "\"" + name + "\""
 
