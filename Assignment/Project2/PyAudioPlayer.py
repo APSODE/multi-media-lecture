@@ -1,14 +1,14 @@
 from typing import Optional
 from librosa import load
-
 from pyaudio import PyAudio
 from wave import open as wv_open
-from wave import Wave_read, Wave_write
+from wave import Wave_read
 
 
 import os
 import matplotlib.pyplot as plt
 import librosa
+
 
 ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
