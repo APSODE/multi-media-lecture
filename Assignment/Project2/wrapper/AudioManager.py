@@ -10,6 +10,10 @@ class AudioManager(PyAudio):
         self._loaded_audio_file: LoadedAudioFile = loaded_audio_file
         self._audio_stream: Stream = self._create_audio_stream()
 
+    @staticmethod
+    def create_manager(loaded_audio_file: LoadedAudioFile) -> "AudioManager":
+        return AudioManager(loaded_audio_file = loaded_audio_file)
+
     def _create_audio_stream(self) -> Stream:
         return self.open(
             format = self.get_format_from_width(self._loaded_audio_file.file.getsampwidth()),
@@ -33,7 +37,6 @@ class AudioManager(PyAudio):
             self.stop()
 
         self.terminate()
-        pass
 
 
 
