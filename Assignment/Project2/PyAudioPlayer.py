@@ -49,10 +49,10 @@ class PyAudioPlayer:
 
     @NotNone("_loaded_file")
     async def _play(self):
-        with AudioManager(loaded_audio_file = self._loaded_file) as audio_manager:
-            audio_manager: AudioManager
-            audio_manager.play()
-            self._audio_manager = audio_manager
+        audio_manager = AudioManager.create_manager(loaded_audio_file=self._loaded_file)
+        audio_thread = Thread(target = audio_manager.play)
+        audio_thread.start()
+        self._audio_manager = audio_manager
 
     @NotNone("_audio_manager")
     async def _stop(self):
