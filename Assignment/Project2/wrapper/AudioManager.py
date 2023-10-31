@@ -29,15 +29,26 @@ class AudioManager(PyAudio):
     def play(self, reverse: bool = False):
         self._is_playing = True
 
+        r_count = 1
+        nframe = 1024
+
         if reverse:
-            self._loaded_audio_file.file.setpos(self._loaded_audio_file.file.getnframes() - 1)
+            self._loaded_audio_file.file.setpos(self._loaded_audio_file.file.getnframes() - (r_count * nframe))
 
-        while len(audio_data := self._loaded_audio_file.file.readframes(1024)):
+        while len(audio_data := self._loaded_audio_file.file.readframes(nframe)):
             if self._is_playing:
-                self._audio_stream.write(audio_data[::-1] if reverse else audio_data)
+                self._audio_stream.write(audio_data)
 
-            else:
-                break
+                if reverse:
+                    r_count += 1
+
+                    if self._loaded_audio_file.file.getnframes() - (r_count * nframe) < 0:
+                        break
+
+                    else:
+                        self._loaded_audio_file.file.setpos(
+                            self._loaded_audio_file.file.getnframes() - (r_count * nframe)
+                        )
 
         self._stop()
         self.terminate()
