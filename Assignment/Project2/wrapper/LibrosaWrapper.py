@@ -4,7 +4,7 @@ from numpy import ndarray
 
 class LibrosaWrapper:
     def __init__(self, wav_file_dir: str):
-        self._librosa_tuple = rosa_load(wav_file_dir)
+        self._librosa_tuple = rosa_load(wav_file_dir, mono = False)
 
     @staticmethod
     def create_object(wav_file_dir: str) -> "LibrosaWrapper":
