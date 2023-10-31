@@ -1,4 +1,5 @@
 from Assignment.Project2.decorator.NotNone import NotNone
+from Assignment.Project2.decorator.IsNone import IsNone
 from Assignment.Project2.wrapper.AudioManager import AudioManager
 from Assignment.Project2.wrapper.LoadedAudioFile import LoadedAudioFile
 from matplotlib.pyplot import xlabel, ylabel, title, show, subplot
@@ -63,14 +64,16 @@ class PyAudioPlayer:
         show()
 
     @NotNone("_loaded_file")
+    @IsNone("_audio_thread")
     async def _play(self, reverse: bool = False):
         self._audio_manager = AudioManager.create_manager(loaded_audio_file = self._loaded_file)
+
         if not reverse:
             print("normal")
             self._audio_thread = Thread(target = self._audio_manager.play)
         else:
             print("reverse")
-            self._audio_thread = Thread(target = self._audio_manager.play, args = [True])
+            self._audio_thread = Thread(target = self._audio_manager.play, kwargs = {"reverse": True})
 
         self._audio_thread.start()
 
