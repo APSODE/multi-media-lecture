@@ -6,10 +6,10 @@ class NotNone:
         self._field_name = field_name
 
     def __call__(self, method: Callable):
-        def wrapper(instance, *args, **kwargs):
+        def wrapper(instance, **kwargs):
             field_value = getattr(instance, self._field_name)
             if field_value is not None:
-                return method(instance)
+                return method(instance, **kwargs)
             else:
                 error_msg = ""
 
