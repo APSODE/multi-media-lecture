@@ -39,10 +39,27 @@ class PyAudioPlayer:
         start_time = int(int(input("start time ? :")) * sampling_rate)
         end_time = int(int(input("end time ? :")) * sampling_rate)
 
-        waveshow(signal[start_time:end_time], sr=sampling_rate)
+        left_channel = signal[0, start_time:end_time]
+        right_channel = signal[1, start_time:end_time]
+        diff_channel = left_channel - right_channel
+
+        subplot(5, 1, 1)
+        waveshow(left_channel, sr = sampling_rate)
         xlabel("Time (s)")
         ylabel("Amplitude")
-        title("Audio Segment")
+        title("Left Channel Audio Segment")
+
+        subplot(5, 1, 3)
+        waveshow(right_channel, sr = sampling_rate)
+        xlabel("Time (s)")
+        ylabel("Amplitude")
+        title("Right Channel Audio Segment")
+
+        subplot(5, 1, 5)
+        waveshow(diff_channel, sr = sampling_rate)
+        xlabel("Time (s)")
+        ylabel("Amplitude")
+        title("Diff Channel Audio Segment")
         show()
 
     @NotNone("_loaded_file")
