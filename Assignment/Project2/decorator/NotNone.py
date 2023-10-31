@@ -16,7 +16,7 @@ class NotNone:
                 if self._field_name == "_loaded_file":
                     error_msg = error_msg.join("오디오 파일을 load하지 않고 해당 기능은 실행 할 수 없습니다.")
 
-                elif self._field_name == "_audio_stream" or self._field_name == "_audio_manager":
+                elif self._field_name in ["_audio_manager", "_audio_thread"]:
                     error_msg = error_msg.join("오디오 파일을 play하지 않고 해당 기능은 실행 할 수 없습니다.")
 
                 else:
