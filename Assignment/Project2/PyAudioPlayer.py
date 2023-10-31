@@ -1,16 +1,13 @@
-from pyaudio import PyAudio, Stream
-
 from Assignment.Project2.decorator.NotNone import NotNone
 from Assignment.Project2.wrapper.AudioManager import AudioManager
 from Assignment.Project2.wrapper.LoadedAudioFile import LoadedAudioFile
-from matplotlib.pyplot import xlabel, ylabel, title, show
+from matplotlib.pyplot import xlabel, ylabel, title, show, subplot
 from librosa.display import waveshow
 from typing import Optional
-from concurrent.futures import ProcessPoolExecutor
-from asyncio import Task, create_task, sleep, run, to_thread, get_event_loop, AbstractEventLoop
+from asyncio import run
 from threading import Thread
 
-import asyncio
+
 import os
 
 
@@ -22,8 +19,9 @@ class PyAudioPlayer:
         self._audio_source_dir = os.path.join(ROOT_PATH, "audio_sources")
         self._loaded_file: Optional[LoadedAudioFile] = None
         self._audio_manager: Optional[AudioManager] = None
+        self._audio_thread: Optional[Thread] = None
         self._is_playing: bool = False
-        asyncio.run(self._menu())
+        run(self._menu())
 
     def _load(self):
         input_audio_file_dir = os.path.join(self._audio_source_dir, input("input filename? : "))
@@ -48,15 +46,21 @@ class PyAudioPlayer:
         show()
 
     @NotNone("_loaded_file")
-    async def _play(self):
-        audio_manager = AudioManager.create_manager(loaded_audio_file=self._loaded_file)
-        audio_thread = Thread(target = audio_manager.play)
-        audio_thread.start()
-        self._audio_manager = audio_manager
+    async def _play(self, reverse: bool = False):
+        self._audio_manager = AudioManager.create_manager(loaded_audio_file = self._loaded_file)
+        if not reverse:
+            print("normal")
+            self._audio_thread = Thread(target = self._audio_manager.play)
+        else:
+            print("reverse")
+            self._audio_thread = Thread(target = self._audio_manager.play, args = [True])
+
+        self._audio_thread.start()
 
     @NotNone("_audio_manager")
     async def _stop(self):
         self._audio_manager.stop()
+        self._audio_thread = None
 
     async def _menu(self):
         while True:
@@ -70,9 +74,9 @@ class PyAudioPlayer:
 
                 elif input_command == "3":
                     await self._stop()
-                #
-                # elif input_command == "4":
-                #     self._r_play()
+
+                elif input_command == "4":
+                    await self._play(reverse = True)
 
                 elif input_command == "5":
                     await self._plot()
