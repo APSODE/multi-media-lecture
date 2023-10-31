@@ -9,10 +9,16 @@ class AudioManager(PyAudio):
         super().__init__()
         self._loaded_audio_file: LoadedAudioFile = loaded_audio_file
         self._audio_stream: Stream = self._create_audio_stream()
+        self._is_playing: bool = False
 
     @staticmethod
     def create_manager(loaded_audio_file: LoadedAudioFile) -> "AudioManager":
         return AudioManager(loaded_audio_file = loaded_audio_file)
+
+    def _field_initialization(self):
+        self._loaded_audio_file.file.setpos(0)
+        self._audio_stream = self._create_audio_stream()
+        self._is_playing = False
 
     def _create_audio_stream(self) -> Stream:
         return self.open(
@@ -22,21 +28,30 @@ class AudioManager(PyAudio):
             output = True
         )
 
-    def play(self):
-        while len(audio_data := self._loaded_audio_file.file.readframes(1024)):
-            self._audio_stream.write(audio_data)
+    def play(self, reverse: bool = False):
+        self._is_playing = True
 
-        self.stop()
+        if reverse:
+            self._loaded_audio_file.file.setpos(self._loaded_audio_file.file.getnframes() - 1)
+
+        while len(audio_data := self._loaded_audio_file.file.readframes(1024)):
+            if self._is_playing:
+                self._audio_stream.write(audio_data[::-1] if reverse else audio_data)
+
+            else:
+                break
+
+        self._stop()
+        self.terminate()
+
+    def _stop(self):
+        self._audio_stream.stop_stream()
+        self._audio_stream.close()
+        self._field_initialization()
 
     def stop(self):
-        self._audio_stream.close()
-        self._audio_stream = None
+        self._is_playing = False
 
-    def __exit__(self, exc_type, exc_val, exc_tb):
-        if self._audio_stream is not None:
-            self.stop()
-
-        self.terminate()
 
 
 
