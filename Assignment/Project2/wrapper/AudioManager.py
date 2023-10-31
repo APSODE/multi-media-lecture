@@ -1,6 +1,4 @@
-from typing import Optional
 from pyaudio import PyAudio, Stream
-
 from Assignment.Project2.wrapper.LoadedAudioFile import LoadedAudioFile
 
 
