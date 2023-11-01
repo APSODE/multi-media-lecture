@@ -16,15 +16,16 @@ ROOT_PATH = os.path.dirname(os.path.abspath(__file__))
 
 
 class PyAudioPlayer:
-    def __init__(self):
+    def __init__(self, with_gui: bool = False):
         self._audio_source_dir = os.path.join(ROOT_PATH, "audio_sources")
         self._loaded_file: Optional[LoadedAudioFile] = None
         self._audio_manager: Optional[AudioManager] = None
         self._audio_thread: Optional[Thread] = None
-        self._is_playing: bool = False
-        run(self._menu())
 
-    def _load(self):
+        if not with_gui:
+            run(self.menu())
+
+    def load(self):
         input_audio_file_dir = os.path.join(self._audio_source_dir, input("input filename? : "))
         self._loaded_file = LoadedAudioFile.create_object(wav_file_dir = input_audio_file_dir)
 
@@ -33,7 +34,7 @@ class PyAudioPlayer:
         print("Play time = " + self._loaded_file.length_with_format())
 
     @NotNone("_loaded_file")
-    async def _plot(self):
+    async def plot(self):
         signal = self._loaded_file.librosa.signal
         sampling_rate = self._loaded_file.librosa.sampling_rate
 
@@ -65,7 +66,7 @@ class PyAudioPlayer:
 
     @NotNone("_loaded_file")
     @IsNone("_audio_thread")
-    async def _play(self, reverse: bool = False):
+    async def play(self, reverse: bool = False):
         self._audio_manager = AudioManager.create_manager(loaded_audio_file = self._loaded_file)
 
         if not reverse:
@@ -78,28 +79,29 @@ class PyAudioPlayer:
         self._audio_thread.start()
 
     @NotNone("_audio_manager")
-    async def _stop(self):
+    @NotNone("_audio_thread")
+    async def stop(self):
         self._audio_manager.stop()
         self._audio_thread = None
 
-    async def _menu(self):
+    async def menu(self):
         while True:
             input_command = input("1. Load, 2. Play, 3. Stop, 4. R-Play, 5. Plot, 6. Exit ? ")
             try:
                 if input_command == "1":
-                    self._load()
+                    self.load()
 
                 elif input_command == "2":
-                    await self._play()
+                    await self.play()
 
                 elif input_command == "3":
-                    await self._stop()
+                    await self.stop()
 
                 elif input_command == "4":
-                    await self._play(reverse = True)
+                    await self.play(reverse = True)
 
                 elif input_command == "5":
-                    await self._plot()
+                    await self.plot()
 
                 elif input_command == "6":
                     break
@@ -109,6 +111,18 @@ class PyAudioPlayer:
 
             except Exception as e:
                 print(e)
+
+    @property
+    def loaded_file(self) -> Optional[LoadedAudioFile]:
+        return self._loaded_file
+
+    @property
+    def audio_manager(self) -> Optional[AudioManager]:
+        return self._audio_manager
+
+    @property
+    def audio_thread(self) -> Optional[Thread]:
+        return self._audio_thread
 
 
 if __name__ == '__main__':
